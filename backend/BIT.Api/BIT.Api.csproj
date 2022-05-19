@@ -11,8 +11,4 @@
     <InternalsVisibleTo Include="BIT.ApiTests" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure" />
-  </ItemGroup>
-
 </Project>

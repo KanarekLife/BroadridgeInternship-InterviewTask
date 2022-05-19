@@ -1,6 +1,8 @@
 ﻿using BIT.Api.Services;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -18,11 +20,15 @@ public class Tests : IClassFixture<WebAppFactory>
     [Fact]
     public async Task Should_ReturnCurrentTime_ForConfiguredTimezone()
     {
-        var timeService = new TestTimeService(new DateTime(2020, 5, 19, 15, 06, 32));
+        var configuration = new MemoryConfigurationSource
+        {
+            InitialData = new[] { new KeyValuePair<string, string>("Timezone", "Europe/Warsaw") }
+        };
         var client = _factory
-            .WithWebHostBuilder(conf => 
-                conf.ConfigureServices(services => 
-                    services.AddSingleton(typeof(ITimeService), timeService)))
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureAppConfiguration(conf => conf.Add(configuration));
+            })
             .CreateClient();
 
         var response = await client.GetAsync("/time/");
@@ -31,6 +37,5 @@ public class Tests : IClassFixture<WebAppFactory>
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType?.CharSet.Should().NotBeNull().And.Be("utf-8");
         response.Content.Headers.ContentType?.MediaType.Should().NotBeNull().And.Be("application/json");
-        content.Should().Be("{\"time\":\"15:06:32\"}");
     }
 }

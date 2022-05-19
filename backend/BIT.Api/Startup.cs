@@ -1,4 +1,7 @@
-﻿namespace BIT.Api;
+﻿using BIT.Api.Infrastructure.WordTimeApiTimeServices;
+using BIT.Api.Services;
+
+namespace BIT.Api;
 
 public class Startup
 {
@@ -11,6 +14,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddTransient<ITimeService, WorldTimeApiTimeService>();
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
