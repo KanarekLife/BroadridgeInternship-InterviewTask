@@ -22,7 +22,8 @@ public class WorldTimeApiTimeService : ITimeService
         var response = await _client.GetAsync($"{Url}/timezone/{_timezone}");
         if (!response.IsSuccessStatusCode)
         {
-            throw new WorldTimeApiReturnsErrorException();
+            var content = await response.Content.ReadFromJsonAsync<WorldTimeApiErrorDto>();
+            throw new WorldTimeApiReturnsErrorException(content?.ErrorDetails);
         }
 
         var dto = await JsonSerializer.DeserializeAsync<WorldTimeApiDto>(await response.Content.ReadAsStreamAsync());
@@ -38,5 +39,11 @@ public class WorldTimeApiTimeService : ITimeService
     {
         [JsonPropertyName("datetime")]
         public DateTime DateTime { get; set; }
+    }
+
+    private class WorldTimeApiErrorDto
+    {
+        [JsonPropertyName("error")]
+        public string ErrorDetails { get; set; }
     }
 }

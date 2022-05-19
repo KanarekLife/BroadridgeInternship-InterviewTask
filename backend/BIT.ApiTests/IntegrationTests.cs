@@ -1,21 +1,21 @@
 ﻿using System.Net;
-using BIT.Api.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace BIT.ApiTests;
 
 public class Tests : IClassFixture<WebAppFactory>
 {
     private readonly WebAppFactory _factory;
+    private readonly ITestOutputHelper _output;
 
-    public Tests(WebAppFactory factory)
+    public Tests(WebAppFactory factory, ITestOutputHelper output)
     {
         _factory = factory;
+        _output = output;
     }
 
     [Fact]
@@ -33,10 +33,13 @@ public class Tests : IClassFixture<WebAppFactory>
             .CreateClient();
 
         var response = await client.GetAsync("/time/");
+        var content = await response.Content.ReadAsStringAsync();
+        _output.WriteLine(content);
 
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType?.CharSet.Should().NotBeNull().And.Be("utf-8");
         response.Content.Headers.ContentType?.MediaType.Should().NotBeNull().And.Be("application/json");
+        content.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -54,7 +57,10 @@ public class Tests : IClassFixture<WebAppFactory>
             .CreateClient();
 
         var response = await client.GetAsync("/time/");
+        var content = await response.Content.ReadAsStringAsync();
+        _output.WriteLine(content);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadGateway);
+        content.Should().NotBeEmpty();
     }
 }
