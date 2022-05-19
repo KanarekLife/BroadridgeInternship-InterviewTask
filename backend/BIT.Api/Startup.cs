@@ -16,6 +16,15 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient<ITimeService, WorldTimeApiTimeService>();
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
         services.AddControllers(conf =>
         {
             conf.Filters.Add<WorldTimeApiInvalidTimezoneFilter>();
@@ -36,6 +45,8 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors();
 
         app.UseEndpoints(endpoints =>
         {
