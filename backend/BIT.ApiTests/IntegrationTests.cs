@@ -1,4 +1,5 @@
-﻿using BIT.Api.Services;
+﻿using System.Net;
+using BIT.Api.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -32,10 +33,28 @@ public class Tests : IClassFixture<WebAppFactory>
             .CreateClient();
 
         var response = await client.GetAsync("/time/");
-        var content = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
         response.Content.Headers.ContentType?.CharSet.Should().NotBeNull().And.Be("utf-8");
         response.Content.Headers.ContentType?.MediaType.Should().NotBeNull().And.Be("application/json");
+    }
+
+    [Fact]
+    public async Task Should_ReturnException_ForInvalidTimezone()
+    {
+        var configuration = new MemoryConfigurationSource
+        {
+            InitialData = new[] { new KeyValuePair<string, string>("Timezone", "Europe/NewYork") }
+        };
+        var client = _factory
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureAppConfiguration(conf => conf.Add(configuration));
+            })
+            .CreateClient();
+
+        var response = await client.GetAsync("/time/");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadGateway);
     }
 }
