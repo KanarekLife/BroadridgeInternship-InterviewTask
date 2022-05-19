@@ -18,6 +18,7 @@ public class Startup
         services.AddTransient<ITimeService, WorldTimeApiTimeService>();
         services.AddControllers(conf =>
         {
+            conf.Filters.Add<WorldTimeApiInvalidTimezoneFilter>();
             conf.Filters.Add<ApiExceptionFilter>();
         });
         services.AddEndpointsApiExplorer();
