@@ -42,12 +42,14 @@ public class Tests : IClassFixture<WebAppFactory>
         content.Should().NotBeEmpty();
     }
 
-    [Fact]
-    public async Task Should_ReturnException_ForInvalidTimezone()
+    [Theory]
+    [InlineData("")]
+    [InlineData("Europe/NewYork")]
+    public async Task Should_ReturnException_ForInvalidTimezone(string timezone)
     {
         var configuration = new MemoryConfigurationSource
         {
-            InitialData = new[] { new KeyValuePair<string, string>("Timezone", "Europe/NewYork") }
+            InitialData = new[] { new KeyValuePair<string, string>("Timezone", timezone) }
         };
         var client = _factory
             .WithWebHostBuilder(builder =>
@@ -60,7 +62,7 @@ public class Tests : IClassFixture<WebAppFactory>
         var content = await response.Content.ReadAsStringAsync();
         _output.WriteLine(content);
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadGateway);
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         content.Should().NotBeEmpty();
     }
 }
