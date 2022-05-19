@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <InternalsVisibleTo Include="BIT.ApiTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure" />
   </ItemGroup>
 
 </Project>
