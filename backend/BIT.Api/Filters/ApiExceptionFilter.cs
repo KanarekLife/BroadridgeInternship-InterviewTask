@@ -1,4 +1,5 @@
 ﻿using BIT.Api.Core;
+using BIT.Api.Infrastructure.WordTimeApiTimeServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,6 +9,8 @@ public class ApiExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
+        if (context.Exception is WorldTimeApiInvalidTimezoneException) return;
+        
         if (context.Exception is not ApiException apiException) return;
 
         context.Result = new ObjectResult(new ProblemDetails
