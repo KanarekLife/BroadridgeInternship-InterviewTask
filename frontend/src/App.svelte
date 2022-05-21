@@ -106,9 +106,7 @@
 		{/if}
 	</div>
 </main>
-<footer>
-	
-</footer>
+
 
 <style>
 	.main {
