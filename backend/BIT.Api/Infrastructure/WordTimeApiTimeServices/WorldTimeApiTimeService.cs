@@ -28,7 +28,7 @@ public class WorldTimeApiTimeService : ITimeService
         if (!response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadFromJsonAsync<WorldTimeApiErrorDto>();
-            if (content is not null && content.ErrorDetails.StartsWith("unknown location"))
+            if (content?.ErrorDetails != null && content.ErrorDetails!.StartsWith("unknown location"))
             {
                 throw new WorldTimeApiInvalidTimezoneException(_timezone, await GetValidTimezones());
             }
@@ -71,6 +71,6 @@ public class WorldTimeApiTimeService : ITimeService
     private class WorldTimeApiErrorDto
     {
         [JsonPropertyName("error")]
-        public string ErrorDetails { get; set; }
+        public string? ErrorDetails { get; set; }
     }
 }
