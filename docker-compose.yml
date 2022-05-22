@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  api:
+    container_name: "api"
+    build: "backend"
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_TIMEZONE=Europe/Warsaw
+  frontend:
+    container_name: "frontend"
+    build: "frontend"
+    ports:
+      - "8080:80"
