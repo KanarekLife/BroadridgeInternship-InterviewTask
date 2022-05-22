@@ -6,20 +6,20 @@ namespace BIT.Api.Infrastructure.WordTimeApiTimeServices;
 
 public class WorldTimeApiTimeService : ITimeService
 {
-    private readonly string _timezone;
+    private readonly string? _timezone;
     private readonly HttpClient _client;
 
     private const string Url = "https://worldtimeapi.org/api";
 
     public WorldTimeApiTimeService(IConfiguration configuration)
     {
-        _timezone = configuration["Timezone"];
+        _timezone = configuration.GetValue<string?>("Timezone");
         _client = new HttpClient();
     }
     
     public async Task<DateTime> GetCurrentTime()
     {
-        if (_timezone.Equals(string.Empty))
+        if (_timezone is null || _timezone.Equals(string.Empty))
         {
             throw new WorldTimeApiInvalidTimezoneException(string.Empty, await GetValidTimezones());
         }

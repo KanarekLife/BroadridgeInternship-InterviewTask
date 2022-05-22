@@ -65,4 +65,17 @@ public class Tests : IClassFixture<WebAppFactory>
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         content.Should().NotBeEmpty();
     }
+    
+    [Fact]
+    public async Task Should_ReturnException_ForNoSetTimezone()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/time/");
+        var content = await response.Content.ReadAsStringAsync();
+        _output.WriteLine(content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        content.Should().NotBeEmpty();
+    }
 }
